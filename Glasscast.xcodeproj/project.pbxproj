@@ -6,14 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		18B14A4B2F1EB20800BF1141 /* Auth in Frameworks */ = {isa = PBXBuildFile; productRef = 18B14A4A2F1EB20800BF1141 /* Auth */; };
+		18B14A4D2F1EB20800BF1141 /* PostgREST in Frameworks */ = {isa = PBXBuildFile; productRef = 18B14A4C2F1EB20800BF1141 /* PostgREST */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		182542D62F1E878D00105E5C /* brewapps.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = brewapps.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		182542D62F1E878D00105E5C /* Glasscast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Glasscast.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		182542D82F1E878D00105E5C /* brewapps */ = {
+		182542D82F1E878D00105E5C /* Glasscast */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = brewapps;
+			path = Glasscast;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -23,6 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18B14A4D2F1EB20800BF1141 /* PostgREST in Frameworks */,
+				18B14A4B2F1EB20800BF1141 /* Auth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -32,7 +39,7 @@
 		182542CD2F1E878D00105E5C = {
 			isa = PBXGroup;
 			children = (
-				182542D82F1E878D00105E5C /* brewapps */,
+				182542D82F1E878D00105E5C /* Glasscast */,
 				182542D72F1E878D00105E5C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -40,7 +47,7 @@
 		182542D72F1E878D00105E5C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				182542D62F1E878D00105E5C /* brewapps.app */,
+				182542D62F1E878D00105E5C /* Glasscast.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,9 +55,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		182542D52F1E878D00105E5C /* brewapps */ = {
+		182542D52F1E878D00105E5C /* Glasscast */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 182542E12F1E879000105E5C /* Build configuration list for PBXNativeTarget "brewapps" */;
+			buildConfigurationList = 182542E12F1E879000105E5C /* Build configuration list for PBXNativeTarget "Glasscast" */;
 			buildPhases = (
 				182542D22F1E878D00105E5C /* Sources */,
 				182542D32F1E878D00105E5C /* Frameworks */,
@@ -61,13 +68,15 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				182542D82F1E878D00105E5C /* brewapps */,
+				182542D82F1E878D00105E5C /* Glasscast */,
 			);
-			name = brewapps;
+			name = Glasscast;
 			packageProductDependencies = (
+				18B14A4A2F1EB20800BF1141 /* Auth */,
+				18B14A4C2F1EB20800BF1141 /* PostgREST */,
 			);
-			productName = brewapps;
-			productReference = 182542D62F1E878D00105E5C /* brewapps.app */;
+			productName = Glasscast;
+			productReference = 182542D62F1E878D00105E5C /* Glasscast.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -85,7 +94,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 182542D12F1E878D00105E5C /* Build configuration list for PBXProject "brewapps" */;
+			buildConfigurationList = 182542D12F1E878D00105E5C /* Build configuration list for PBXProject "Glasscast" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -94,12 +103,15 @@
 			);
 			mainGroup = 182542CD2F1E878D00105E5C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				18B14A492F1EB20800BF1141 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 182542D72F1E878D00105E5C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				182542D52F1E878D00105E5C /* brewapps */,
+				182542D52F1E878D00105E5C /* Glasscast */,
 			);
 		};
 /* End PBXProject section */
@@ -313,7 +325,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		182542D12F1E878D00105E5C /* Build configuration list for PBXProject "brewapps" */ = {
+		182542D12F1E878D00105E5C /* Build configuration list for PBXProject "Glasscast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				182542DF2F1E879000105E5C /* Debug */,
@@ -322,7 +334,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		182542E12F1E879000105E5C /* Build configuration list for PBXNativeTarget "brewapps" */ = {
+		182542E12F1E879000105E5C /* Build configuration list for PBXNativeTarget "Glasscast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				182542E22F1E879000105E5C /* Debug */,
@@ -332,6 +344,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		18B14A492F1EB20800BF1141 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		18B14A4A2F1EB20800BF1141 /* Auth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 18B14A492F1EB20800BF1141 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Auth;
+		};
+		18B14A4C2F1EB20800BF1141 /* PostgREST */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 18B14A492F1EB20800BF1141 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = PostgREST;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 182542CE2F1E878D00105E5C /* Project object */;
 }
