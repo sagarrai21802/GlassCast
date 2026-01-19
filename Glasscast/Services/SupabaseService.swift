@@ -6,21 +6,44 @@
 //
 
 import Foundation
-import Supabase
+import Auth
+import PostgREST
 
 /// Singleton service for Supabase operations
 @MainActor
 class SupabaseService {
     static let shared = SupabaseService()
     
-    // MARK: - Supabase Client
-    let client: SupabaseClient
+    // MARK: - Configuration
+    private let supabaseURL = URL(string: "https://eoidtvgddtxjjjaahmbe.supabase.co")!
+    private let supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvaWR0dmdkZHR4ampqYWFobWJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MjAyMzEsImV4cCI6MjA4NDM5NjIzMX0.x1fbFnx2dB54N86VNDwki9NitpcVL1uiM28iOejwc1s"
+    
+    // MARK: - Clients
+    let authClient: AuthClient
+    
+    var postgrestClient: PostgrestClient {
+        var headers = ["apikey": supabaseKey]
+        if let token = authClient.currentSession?.accessToken {
+            headers["Authorization"] = "Bearer \(token)"
+        } else {
+            headers["Authorization"] = "Bearer \(supabaseKey)"
+        }
+        
+        return PostgrestClient(
+            url: supabaseURL.appendingPathComponent("rest/v1"),
+            schema: "public",
+            headers: headers
+        )
+    }
     
     private init() {
-        // Initialize Supabase client with project credentials
-        client = SupabaseClient(
-            supabaseURL: URL(string: "https://eoidtvgddtxjjjaahmbe.supabase.co")!,
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvaWR0dmdkZHR4ampqYWFobWJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MjAyMzEsImV4cCI6MjA4NDM5NjIzMX0.x1fbFnx2dB54N86VNDwki9NitpcVL1uiM28iOejwc1s"
+        // Initialize Auth client
+        authClient = AuthClient(
+            configuration: AuthClient.Configuration(
+                url: supabaseURL.appendingPathComponent("auth/v1"),
+                headers: ["apikey": supabaseKey, "Authorization": "Bearer \(supabaseKey)"],
+                localStorage: InMemoryLocalStorage()
+            )
         )
     }
     
@@ -28,22 +51,22 @@ class SupabaseService {
     
     /// Sign up a new user with email and password
     func signUp(email: String, password: String) async throws {
-        try await client.auth.signUp(email: email, password: password)
+        try await authClient.signUp(email: email, password: password)
     }
     
     /// Sign in an existing user with email and password
     func signIn(email: String, password: String) async throws {
-        try await client.auth.signIn(email: email, password: password)
+        try await authClient.signIn(email: email, password: password)
     }
     
     /// Sign out the current user
     func signOut() async throws {
-        try await client.auth.signOut()
+        try await authClient.signOut()
     }
     
     /// Get the current authenticated user
     var currentUser: User? {
-        client.auth.currentUser
+        authClient.currentUser
     }
     
     /// Check if user is authenticated
@@ -53,6 +76,32 @@ class SupabaseService {
     
     /// Get the current session
     var currentSession: Session? {
-        client.auth.currentSession
+        authClient.currentSession
     }
 }
+
+// MARK: - In-Memory Storage
+final class InMemoryLocalStorage: AuthLocalStorage, @unchecked Sendable {
+    private var storage: [String: Data] = [:]
+    private let lock = NSLock()
+    
+    func store(key: String, value: Data) throws {
+        lock.lock()
+        defer { lock.unlock() }
+        storage[key] = value
+    }
+    
+    func retrieve(key: String) throws -> Data? {
+        lock.lock()
+        defer { lock.unlock() }
+        return storage[key]
+    }
+    
+    func remove(key: String) throws {
+        lock.lock()
+        defer { lock.unlock() }
+        storage.removeValue(forKey: key)
+    }
+}
+
+

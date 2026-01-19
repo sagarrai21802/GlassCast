@@ -28,6 +28,7 @@ class AuthViewModel {
     var isLoading: Bool = false
     var errorMessage: String?
     var isAuthenticated: Bool = false
+    var showEmailVerificationModal: Bool = false
     
     // MARK: - Computed Properties
     var isSignUp: Bool {
@@ -86,8 +87,8 @@ class AuthViewModel {
             if SupabaseService.shared.isAuthenticated {
                 isAuthenticated = true
             } else if isSignUp {
-                // For sign up, user may need to verify email
-                errorMessage = "Please check your email to verify your account."
+                // For sign up, show email verification modal
+                showEmailVerificationModal = true
             }
             
             isLoading = false

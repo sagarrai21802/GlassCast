@@ -63,6 +63,22 @@ struct AuthView: View {
                 }
             }
         }
+        .overlay {
+            // Email Verification Modal
+            if viewModel.showEmailVerificationModal {
+                EmailVerificationModal(email: viewModel.email) {
+                    withAnimation {
+                        viewModel.showEmailVerificationModal = false
+                        // Switch to Sign In mode
+                        viewModel.authMode = .signIn
+                        viewModel.password = ""
+                        viewModel.confirmPassword = ""
+                    }
+                }
+                .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.3), value: viewModel.showEmailVerificationModal)
     }
 }
 
