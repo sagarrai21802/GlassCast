@@ -87,7 +87,8 @@ class WeatherService {
     
     // MARK: - Fetch Weather by Coordinates
     func fetchWeather(lat: Double, lon: Double) async throws -> WeatherData {
-        let urlString = "\(baseURL)/weather?lat=\(lat)&lon=\(lon)&appid=\(apiKey)&units=metric"
+        let unit = PreferencesService.shared.temperatureUnit.id
+        let urlString = "\(baseURL)/weather?lat=\(lat)&lon=\(lon)&appid=\(apiKey)&units=\(unit)"
         guard let url = URL(string: urlString) else {
             throw WeatherError.invalidURL
         }
@@ -104,8 +105,9 @@ class WeatherService {
     
     // MARK: - Fetch Weather by City Name
     func fetchWeather(city: String) async throws -> WeatherData {
+        let unit = PreferencesService.shared.temperatureUnit.id
         let encodedCity = city.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? city
-        let urlString = "\(baseURL)/weather?q=\(encodedCity)&appid=\(apiKey)&units=metric"
+        let urlString = "\(baseURL)/weather?q=\(encodedCity)&appid=\(apiKey)&units=\(unit)"
         guard let url = URL(string: urlString) else {
             throw WeatherError.invalidURL
         }
@@ -136,6 +138,65 @@ class WeatherService {
         
         let decoder = JSONDecoder()
         return try decoder.decode([CitySearchResult].self, from: data)
+    }
+    
+    // MARK: - Fetch 5-Day Forecast
+    func fetchForecast(lat: Double, lon: Double) async throws -> [ForecastItem] {
+        let unit = PreferencesService.shared.temperatureUnit.id
+        let urlString = "\(baseURL)/forecast?lat=\(lat)&lon=\(lon)&appid=\(apiKey)&units=\(unit)"
+        guard let url = URL(string: urlString) else {
+            throw WeatherError.invalidURL
+        }
+        
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw WeatherError.invalidResponse
+        }
+        
+        let decoder = JSONDecoder()
+        let responseData = try decoder.decode(ForecastResponse.self, from: data)
+        return responseData.list
+    }
+}
+
+// MARK: - Forecast Models
+struct ForecastResponse: Codable {
+    let list: [ForecastItem]
+}
+
+struct ForecastItem: Codable, Identifiable {
+    let dt: TimeInterval
+    let main: WeatherData.MainWeather
+    let weather: [WeatherData.WeatherCondition]
+    
+    var id: TimeInterval { dt }
+    var date: Date { Date(timeIntervalSince1970: dt) }
+}
+
+extension ForecastItem {
+    var iconName: String {
+        guard let condition = weather.first else { return "cloud.fill" }
+        
+        switch condition.icon {
+        case "01d": return "sun.max.fill"
+        case "01n": return "moon.fill"
+        case "02d": return "cloud.sun.fill"
+        case "02n": return "cloud.moon.fill"
+        case "03d", "03n": return "cloud.fill"
+        case "04d", "04n": return "smoke.fill"
+        case "09d", "09n": return "cloud.drizzle.fill"
+        case "10d": return "cloud.sun.rain.fill"
+        case "10n": return "cloud.moon.rain.fill"
+        case "11d", "11n": return "cloud.bolt.fill"
+        case "13d", "13n": return "snow"
+        case "50d", "50n": return "cloud.fog.fill"
+        default: return "cloud.fill"
+        }
+    }
+    
+    var temperatureString: String {
+        "\(Int(round(main.temp)))°"
     }
 }
 

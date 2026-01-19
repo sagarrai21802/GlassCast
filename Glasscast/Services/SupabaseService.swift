@@ -42,7 +42,7 @@ class SupabaseService {
             configuration: AuthClient.Configuration(
                 url: supabaseURL.appendingPathComponent("auth/v1"),
                 headers: ["apikey": supabaseKey, "Authorization": "Bearer \(supabaseKey)"],
-                localStorage: InMemoryLocalStorage()
+                localStorage: KeychainLocalStorage()
             )
         )
     }
@@ -57,6 +57,16 @@ class SupabaseService {
     /// Sign in an existing user with email and password
     func signIn(email: String, password: String) async throws {
         try await authClient.signIn(email: email, password: password)
+    }
+    
+    /// Verify OTP for email verification (Sign Up)
+    func verifySignupOtp(email: String, token: String) async throws {
+        try await authClient.verifyOTP(email: email, token: token, type: .signup)
+    }
+    
+    /// Restore session from storage
+    func restoreSession() async {
+        _ = try? await authClient.session
     }
     
     /// Sign out the current user

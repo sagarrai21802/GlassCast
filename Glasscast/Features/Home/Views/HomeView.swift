@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @State private var viewModel = HomeViewModel()
     @State private var showSearchResults = false
+    private var preferences = PreferencesService.shared
     
     var body: some View {
         ZStack {
@@ -27,6 +28,10 @@ struct HomeView: View {
                     } else if let weather = viewModel.currentWeather {
                         weatherCard(weather: weather)
                         detailsCard(weather: weather)
+                        
+                        if !viewModel.forecast.isEmpty {
+                            forecastSection
+                        }
                     }
                     
                     Spacer(minLength: 100) // Space for tab bar
@@ -45,6 +50,11 @@ struct HomeView: View {
         }
         .task {
             await viewModel.loadCurrentLocationWeather()
+        }
+        .onChange(of: preferences.temperatureUnit) { _, _ in
+            Task { @MainActor in
+                await viewModel.refreshWeather()
+            }
         }
         .onChange(of: viewModel.searchText) { _, newValue in
             if newValue.isEmpty {
@@ -70,10 +80,10 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Good \(timeOfDay)")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(.primary.opacity(0.6))
                     Text("Glasscast")
                         .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                 }
                 Spacer()
                 
@@ -84,47 +94,47 @@ struct HomeView: View {
                     Text(viewModel.currentWeather?.name ?? "Loading...")
                         .font(.system(size: 14, weight: .medium))
                 }
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(.primary.opacity(0.7))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .background(
                     Capsule()
-                        .fill(Color.white.opacity(0.1))
+                        .fill(Color.primary.opacity(0.1))
                 )
             }
             
             // Search Bar
             HStack(spacing: 12) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(.white.opacity(0.5))
+                    .foregroundColor(.primary.opacity(0.5))
                 
                 TextField("Search city...", text: $viewModel.searchText)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .placeholder(when: viewModel.searchText.isEmpty) {
-                        Text("Search city...").foregroundColor(.white.opacity(0.3))
+                        Text("Search city...").foregroundColor(.primary.opacity(0.3))
                     }
                 
                 if viewModel.isSearching {
                     ProgressView()
                         .scaleEffect(0.8)
-                        .tint(.white)
+                        .tint(.primary)
                 } else if !viewModel.searchText.isEmpty {
                     Button {
                         viewModel.searchText = ""
                         showSearchResults = false
                     } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.white.opacity(0.5))
+                            .foregroundColor(.primary.opacity(0.5))
                     }
                 }
             }
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.white.opacity(0.08))
+                    .fill(Color.primary.opacity(0.08))
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                            .stroke(Color.primary.opacity(0.1), lineWidth: 1)
                     )
             )
         }
@@ -138,36 +148,36 @@ struct HomeView: View {
                 .font(.system(size: 80))
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [.white, .white.opacity(0.7)],
+                        colors: [.primary, .primary.opacity(0.7)],
                         startPoint: .top,
                         endPoint: .bottom
                     )
                 )
-                .shadow(color: .white.opacity(0.3), radius: 20)
+                .shadow(color: .primary.opacity(0.3), radius: 20)
             
             // Temperature
             Text(weather.temperatureString)
                 .font(.system(size: 96, weight: .thin))
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
             
             // Condition
             Text(weather.conditionDescription)
                 .font(.system(size: 20, weight: .medium))
-                .foregroundColor(.white.opacity(0.8))
+                .foregroundColor(.primary.opacity(0.8))
             
             // High/Low
             Text(weather.highLowString)
                 .font(.system(size: 16))
-                .foregroundColor(.white.opacity(0.5))
+                .foregroundColor(.primary.opacity(0.5))
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
         .background(
             RoundedRectangle(cornerRadius: 32)
-                .fill(Color.white.opacity(0.05))
+                .fill(Color.primary.opacity(0.05))
                 .overlay(
                     RoundedRectangle(cornerRadius: 32)
-                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 1)
                 )
         )
     }
@@ -179,23 +189,23 @@ struct HomeView: View {
             
             Divider()
                 .frame(height: 40)
-                .background(Color.white.opacity(0.2))
+                .background(Color.primary.opacity(0.2))
             
             detailItem(icon: "humidity.fill", title: "Humidity", value: "\(weather.main.humidity)%")
             
             Divider()
                 .frame(height: 40)
-                .background(Color.white.opacity(0.2))
+                .background(Color.primary.opacity(0.2))
             
             detailItem(icon: "wind", title: "Wind", value: "\(Int(round(weather.wind.speed))) km/h")
         }
         .padding(.vertical, 20)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white.opacity(0.05))
+                .fill(Color.primary.opacity(0.05))
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
-                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 1)
                 )
         )
     }
@@ -208,25 +218,77 @@ struct HomeView: View {
             
             Text(title)
                 .font(.system(size: 12))
-                .foregroundColor(.white.opacity(0.5))
+                .foregroundColor(.primary.opacity(0.5))
             
             Text(value)
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
         }
         .frame(maxWidth: .infinity)
     }
+    
+    // MARK: - Forecast Section
+    private var forecastSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("5-Day Forecast")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(.primary)
+                .padding(.leading, 4)
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(viewModel.forecast) { day in
+                        forecastCard(day: day)
+                    }
+                }
+                .padding(.horizontal, 4)
+            }
+        }
+    }
+    
+    private func forecastCard(day: DailyForecast) -> some View {
+        VStack(spacing: 12) {
+            Text(day.dayName)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.primary.opacity(0.8))
+            
+            Image(systemName: day.icon)
+                .font(.system(size: 24))
+                .foregroundColor(.primary)
+                .frame(height: 24)
+            
+            VStack(spacing: 2) {
+                Text("\(Int(round(day.maxTemp)))°")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.primary)
+                
+                Text("\(Int(round(day.minTemp)))°")
+                    .font(.system(size: 14))
+                    .foregroundColor(.primary.opacity(0.5))
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.primary.opacity(0.05))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 1)
+                )
+        )
+    }
+
     
     // MARK: - Loading View
     private var loadingView: some View {
         VStack(spacing: 20) {
             ProgressView()
                 .scaleEffect(1.5)
-                .tint(.white)
+                .tint(.primary)
             
             Text("Getting your location...")
                 .font(.system(size: 16))
-                .foregroundColor(.white.opacity(0.6))
+                .foregroundColor(.primary.opacity(0.6))
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 100)
@@ -241,7 +303,7 @@ struct HomeView: View {
             
             Text(message)
                 .font(.system(size: 16))
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(.primary.opacity(0.7))
                 .multilineTextAlignment(.center)
             
             Button {

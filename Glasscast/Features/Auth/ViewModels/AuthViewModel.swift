@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import Auth
 
 /// Authentication mode
 enum AuthMode: String, CaseIterable {
@@ -29,6 +30,10 @@ class AuthViewModel {
     var errorMessage: String?
     var isAuthenticated: Bool = false
     var showEmailVerificationModal: Bool = false
+    
+    // OTP Properties
+    var otpCode: String = ""
+    var showOtpInput: Bool = false
     
     // MARK: - Computed Properties
     var isSignUp: Bool {
@@ -87,14 +92,40 @@ class AuthViewModel {
             if SupabaseService.shared.isAuthenticated {
                 isAuthenticated = true
             } else if isSignUp {
-                // For sign up, show email verification modal
-                showEmailVerificationModal = true
+                // For sign up, show OTP OTP Input
+                showOtpInput = true
+                showEmailVerificationModal = false // Ensure legacy modal is off
             }
             
             isLoading = false
         } catch {
             isLoading = false
             // Parse Supabase error message
+            errorMessage = parseAuthError(error)
+        }
+    }
+    
+    func verifyOtp() async {
+        guard otpCode.count >= 6 else {
+            errorMessage = "Please enter a valid 6-digit code"
+            return
+        }
+        
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            // Verify OTP Logic
+            try await SupabaseService.shared.verifySignupOtp(email: email, token: otpCode)
+            
+            // Check if authenticated
+            if SupabaseService.shared.isAuthenticated {
+                isAuthenticated = true
+                showOtpInput = false
+            }
+            isLoading = false
+        } catch {
+            isLoading = false
             errorMessage = parseAuthError(error)
         }
     }

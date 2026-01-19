@@ -11,6 +11,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var showSplash: Bool = false  // Set to false to skip splash
     @State private var isAuthenticated: Bool = false
+    private var preferences = PreferencesService.shared
     
     var body: some View {
         ZStack {
@@ -32,12 +33,20 @@ struct ContentView: View {
                     .transition(.opacity.combined(with: .move(edge: .trailing)))
             } else {
                 // Main App Navigation
-                MainTabView()
+                MainTabView(isAuthenticated: $isAuthenticated)
                     .transition(.opacity)
             }
         }
         .animation(.easeInOut(duration: 0.4), value: showSplash)
         .animation(.easeInOut(duration: 0.4), value: isAuthenticated)
+        .preferredColorScheme(preferences.theme == .system ? nil : (preferences.theme == .dark ? .dark : .light))
+        .task {
+            // Restore persistent session
+            await SupabaseService.shared.restoreSession()
+            withAnimation {
+                isAuthenticated = SupabaseService.shared.isAuthenticated
+            }
+        }
     }
 }
 

@@ -43,7 +43,7 @@ struct CustomTabBar: View {
                         // Optional text or indicator
                         if selectedTab == tab {
                             Circle()
-                                .fill(Color.white)
+                                .fill(Color.primary)
                                 .frame(width: 4, height: 4)
                                 .matchedGeometryEffect(id: "TabIndicator", in: animation)
                         } else {
@@ -52,7 +52,7 @@ struct CustomTabBar: View {
                                 .frame(width: 4, height: 4)
                         }
                     }
-                    .foregroundColor(selectedTab == tab ? .white : .white.opacity(0.4))
+                    .foregroundColor(selectedTab == tab ? .primary : .primary.opacity(0.4))
                     .frame(maxWidth: .infinity)
                 }
             }
@@ -63,13 +63,13 @@ struct CustomTabBar: View {
             ZStack {
                 // Glass Background
                 RoundedRectangle(cornerRadius: 32)
-                    .fill(Color(hex: "1a1a4e").opacity(0.6))
+                    .fill(Color.primary.opacity(0.05))
                     .blur(radius: 0)
                 
                 RoundedRectangle(cornerRadius: 32)
                     .stroke(
                         LinearGradient(
-                            colors: [.white.opacity(0.2), .white.opacity(0.05)],
+                            colors: [.primary.opacity(0.2), .primary.opacity(0.05)],
                             startPoint: .top,
                             endPoint: .bottom
                         ),

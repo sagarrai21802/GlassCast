@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FavouritesView: View {
     @State private var viewModel = FavouritesViewModel()
+    private var preferences = PreferencesService.shared
     
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -18,10 +19,10 @@ struct FavouritesView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Your Cities")
                             .font(.system(size: 28, weight: .bold))
-                            .foregroundColor(.white)
+                            .foregroundColor(.primary)
                         Text("\(viewModel.favorites.count) saved")
                             .font(.system(size: 14))
-                            .foregroundColor(.white.opacity(0.5))
+                            .foregroundColor(.primary.opacity(0.5))
                     }
                     Spacer()
                 }
@@ -57,6 +58,11 @@ struct FavouritesView: View {
         .task {
             await viewModel.loadFavorites()
         }
+        .onChange(of: preferences.temperatureUnit) { _, _ in
+             Task {
+                 await viewModel.refresh()
+             }
+         }
     }
     
     // MARK: - Loading View
@@ -64,9 +70,9 @@ struct FavouritesView: View {
         VStack(spacing: 16) {
             ProgressView()
                 .scaleEffect(1.5)
-                .tint(.white)
+                .tint(.primary)
             Text("Loading favorites...")
-                .foregroundColor(.white.opacity(0.6))
+                .foregroundColor(.primary.opacity(0.6))
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 100)
@@ -77,15 +83,15 @@ struct FavouritesView: View {
         VStack(spacing: 20) {
             Image(systemName: "heart.slash")
                 .font(.system(size: 60))
-                .foregroundColor(.white.opacity(0.3))
+                .foregroundColor(.primary.opacity(0.3))
             
             Text("No Favorites Yet")
                 .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
             
             Text("Search for cities on the Home tab\nand tap + to add them here")
                 .font(.system(size: 14))
-                .foregroundColor(.white.opacity(0.5))
+                .foregroundColor(.primary.opacity(0.5))
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
@@ -103,16 +109,16 @@ struct FavoriteCityCard: View {
             // Weather Icon
             ZStack {
                 Circle()
-                    .fill(Color.white.opacity(0.1))
+                    .fill(Color.primary.opacity(0.1))
                     .frame(width: 56, height: 56)
                 
                 if let weather = cityWithWeather.weather {
                     Image(systemName: weather.iconName)
                         .font(.system(size: 24))
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                 } else if cityWithWeather.isLoading {
                     ProgressView()
-                        .tint(.white)
+                        .tint(.primary)
                 }
             }
             
@@ -120,11 +126,11 @@ struct FavoriteCityCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(cityWithWeather.favorite.cityName)
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                 
                 Text(cityWithWeather.favorite.country)
                     .font(.system(size: 14))
-                    .foregroundColor(.white.opacity(0.5))
+                    .foregroundColor(.primary.opacity(0.5))
                 
                 if let weather = cityWithWeather.weather {
                     Text(weather.conditionDescription)
@@ -139,7 +145,7 @@ struct FavoriteCityCard: View {
             if let weather = cityWithWeather.weather {
                 Text(weather.temperatureString)
                     .font(.system(size: 32, weight: .light))
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
             }
             
             // Delete Button
@@ -152,14 +158,15 @@ struct FavoriteCityCard: View {
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white.opacity(0.05))
+                .fill(Color.primary.opacity(0.05))
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
-                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 1)
                 )
         )
     }
 }
+
 
 #Preview {
     ZStack {

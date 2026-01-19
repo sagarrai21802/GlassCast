@@ -64,21 +64,13 @@ struct AuthView: View {
             }
         }
         .overlay {
-            // Email Verification Modal
-            if viewModel.showEmailVerificationModal {
-                EmailVerificationModal(email: viewModel.email) {
-                    withAnimation {
-                        viewModel.showEmailVerificationModal = false
-                        // Switch to Sign In mode
-                        viewModel.authMode = .signIn
-                        viewModel.password = ""
-                        viewModel.confirmPassword = ""
-                    }
-                }
-                .transition(.opacity)
+            // OTP Verification Modal
+            if viewModel.showOtpInput {
+                OTPVerificationView(viewModel: viewModel)
+                    .transition(.opacity)
             }
         }
-        .animation(.easeInOut(duration: 0.3), value: viewModel.showEmailVerificationModal)
+        .animation(.easeInOut(duration: 0.3), value: viewModel.showOtpInput)
     }
 }
 
@@ -276,7 +268,7 @@ struct AuthForm: View {
                 .frame(height: 56)
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
-                        .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                        .stroke(Color.primary.opacity(0.2), lineWidth: 1)
                 )
             }
             .disabled(viewModel.isLoading)
@@ -297,11 +289,11 @@ struct PremiumTextField: View {
         HStack(spacing: 16) {
             Image(systemName: icon)
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(isFocused ? .white : .white.opacity(0.5))
+                .foregroundColor(isFocused ? .primary : .primary.opacity(0.5))
                 .frame(width: 24)
             
-            TextField("", text: $text, prompt: Text(placeholder).foregroundColor(.white.opacity(0.3)))
-                .foregroundColor(.white)
+            TextField("", text: $text, prompt: Text(placeholder).foregroundColor(.primary.opacity(0.3)))
+                .foregroundColor(.primary)
                 .keyboardType(keyboardType)
                 .focused($isFocused)
         }
@@ -309,15 +301,15 @@ struct PremiumTextField: View {
         .frame(height: 56)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color.white.opacity(isFocused ? 0.1 : 0.05))
+                .fill(Color.primary.opacity(isFocused ? 0.1 : 0.05))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(
                     LinearGradient(
                         colors: [
-                            .white.opacity(isFocused ? 0.5 : 0.1),
-                            .white.opacity(isFocused ? 0.2 : 0.05)
+                            .primary.opacity(isFocused ? 0.5 : 0.1),
+                            .primary.opacity(isFocused ? 0.2 : 0.05)
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -341,37 +333,37 @@ struct PremiumSecureField: View {
         HStack(spacing: 16) {
             Image(systemName: icon)
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(isFocused ? .white : .white.opacity(0.5))
+                .foregroundColor(isFocused ? .primary : .primary.opacity(0.5))
                 .frame(width: 24)
             
             Group {
                 if isVisible {
-                    TextField("", text: $text, prompt: Text(placeholder).foregroundColor(.white.opacity(0.3)))
+                    TextField("", text: $text, prompt: Text(placeholder).foregroundColor(.primary.opacity(0.3)))
                 } else {
-                    SecureField("", text: $text, prompt: Text(placeholder).foregroundColor(.white.opacity(0.3)))
+                    SecureField("", text: $text, prompt: Text(placeholder).foregroundColor(.primary.opacity(0.3)))
                 }
             }
-            .foregroundColor(.white)
+            .foregroundColor(.primary)
             .focused($isFocused)
             
             Button(action: onToggleVisibility) {
                 Image(systemName: isVisible ? "eye.slash.fill" : "eye.fill")
-                    .foregroundColor(.white.opacity(0.3))
+                    .foregroundColor(.primary.opacity(0.3))
             }
         }
         .padding(.horizontal, 20)
         .frame(height: 56)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color.white.opacity(isFocused ? 0.1 : 0.05))
+                .fill(Color.primary.opacity(isFocused ? 0.1 : 0.05))
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(
                     LinearGradient(
                         colors: [
-                            .white.opacity(isFocused ? 0.5 : 0.1),
-                            .white.opacity(isFocused ? 0.2 : 0.05)
+                            .primary.opacity(isFocused ? 0.5 : 0.1),
+                            .primary.opacity(isFocused ? 0.2 : 0.05)
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -390,9 +382,9 @@ struct AuthFooter: View {
     var body: some View {
         VStack(spacing: 30) {
             HStack(spacing: 16) {
-                Rectangle().fill(Color.white.opacity(0.1)).frame(height: 1)
-                Text("or continue with").font(.caption).foregroundColor(.white.opacity(0.4))
-                Rectangle().fill(Color.white.opacity(0.1)).frame(height: 1)
+                Rectangle().fill(Color.primary.opacity(0.1)).frame(height: 1)
+                Text("or continue with").font(.caption).foregroundColor(.primary.opacity(0.4))
+                Rectangle().fill(Color.primary.opacity(0.1)).frame(height: 1)
             }
             
             HStack(spacing: 20) {
@@ -411,16 +403,16 @@ struct SocialButton: View {
         Button(action: action) {
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.white.opacity(0.05))
+                    .fill(Color.primary.opacity(0.05))
                 
                 Image(systemName: icon)
                     .font(.system(size: 22))
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
             }
             .frame(height: 56)
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                    .stroke(Color.primary.opacity(0.1), lineWidth: 1)
             )
         }
     }

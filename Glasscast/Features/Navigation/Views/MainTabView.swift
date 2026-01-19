@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @Binding var isAuthenticated: Bool
     @State private var selectedTab: Tab = .home
     
-    init() {
+    init(isAuthenticated: Binding<Bool>) {
+        _isAuthenticated = isAuthenticated
         // Hide default TabBar
         UITabBar.appearance().isHidden = true
     }
@@ -28,7 +30,7 @@ struct MainTabView: View {
                 FavouritesView()
                     .tag(Tab.favourites)
                 
-                SettingsView()
+                SettingsView(isAuthenticated: $isAuthenticated)
                     .tag(Tab.settings)
             }
             
@@ -42,5 +44,6 @@ struct MainTabView: View {
 }
 
 #Preview {
-    MainTabView()
+    MainTabView(isAuthenticated: .constant(true))
 }
+
