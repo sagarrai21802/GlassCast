@@ -11,6 +11,9 @@ struct FavouritesView: View {
     @State private var viewModel = FavouritesViewModel()
     private var preferences = PreferencesService.shared
     
+    // Animation State
+    @State private var showCards = false
+    
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
@@ -35,14 +38,22 @@ struct FavouritesView: View {
                     emptyView
                 } else {
                     LazyVStack(spacing: 16) {
-                        ForEach(viewModel.favorites) { cityWithWeather in
+                        ForEach(Array(viewModel.favorites.enumerated()), id: \.element.id) { index, cityWithWeather in
                             FavoriteCityCard(
                                 cityWithWeather: cityWithWeather,
                                 onDelete: {
+                                    HapticService.warning()
                                     Task {
                                         await viewModel.removeFavorite(cityWithWeather)
                                     }
                                 }
+                            )
+                            .offset(y: showCards ? 0 : 20)
+                            .opacity(showCards ? 1 : 0)
+                            .animation(
+                                .spring(response: 0.5, dampingFraction: 0.8)
+                                .delay(Double(index) * 0.08),
+                                value: showCards
                             )
                         }
                     }
@@ -57,6 +68,9 @@ struct FavouritesView: View {
         }
         .task {
             await viewModel.loadFavorites()
+            withAnimation {
+                showCards = true
+            }
         }
         .onChange(of: preferences.temperatureUnit) { _, _ in
              Task {
@@ -67,35 +81,16 @@ struct FavouritesView: View {
     
     // MARK: - Loading View
     private var loadingView: some View {
-        VStack(spacing: 16) {
-            ProgressView()
-                .scaleEffect(1.5)
-                .tint(.primary)
-            Text("Loading favorites...")
-                .foregroundColor(.primary.opacity(0.6))
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.top, 100)
+        ShimmerLoadingView(message: "Loading favorites...")
     }
     
     // MARK: - Empty View
     private var emptyView: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "heart.slash")
-                .font(.system(size: 60))
-                .foregroundColor(.primary.opacity(0.3))
-            
-            Text("No Favorites Yet")
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(.primary)
-            
-            Text("Search for cities on the Home tab\nand tap + to add them here")
-                .font(.system(size: 14))
-                .foregroundColor(.primary.opacity(0.5))
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.top, 80)
+        EmptyStateView(
+            icon: "heart.slash",
+            title: "No Favorites Yet",
+            message: "Search for cities on the Home tab and tap + to add them here"
+        )
     }
 }
 

@@ -12,6 +12,11 @@ struct HomeView: View {
     @State private var showSearchResults = false
     private var preferences = PreferencesService.shared
     
+    // Animation States
+    @State private var showWeatherCard = false
+    @State private var showDetailsCard = false
+    @State private var showForecast = false
+    
     var body: some View {
         ZStack {
             // Content
@@ -27,10 +32,17 @@ struct HomeView: View {
                         errorView(message: error)
                     } else if let weather = viewModel.currentWeather {
                         weatherCard(weather: weather)
+                            .offset(y: showWeatherCard ? 0 : 30)
+                            .opacity(showWeatherCard ? 1 : 0)
+                        
                         detailsCard(weather: weather)
+                            .offset(y: showDetailsCard ? 0 : 30)
+                            .opacity(showDetailsCard ? 1 : 0)
                         
                         if !viewModel.forecast.isEmpty {
                             forecastSection
+                                .offset(y: showForecast ? 0 : 30)
+                                .opacity(showForecast ? 1 : 0)
                         }
                     }
                     
@@ -41,6 +53,7 @@ struct HomeView: View {
             }
             .refreshable {
                 await viewModel.refreshWeather()
+                HapticService.mediumImpact()
             }
             
             // Search Results Overlay
@@ -50,6 +63,16 @@ struct HomeView: View {
         }
         .task {
             await viewModel.loadCurrentLocationWeather()
+            // Trigger staggered animations
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.1)) {
+                showWeatherCard = true
+            }
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.25)) {
+                showDetailsCard = true
+            }
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.4)) {
+                showForecast = true
+            }
         }
         .onChange(of: preferences.temperatureUnit) { _, _ in
             Task { @MainActor in
@@ -154,6 +177,7 @@ struct HomeView: View {
                     )
                 )
                 .shadow(color: .primary.opacity(0.3), radius: 20)
+                .floating(amplitude: 4, duration: 2.5)
             
             // Temperature
             Text(weather.temperatureString)
@@ -281,47 +305,14 @@ struct HomeView: View {
     
     // MARK: - Loading View
     private var loadingView: some View {
-        VStack(spacing: 20) {
-            ProgressView()
-                .scaleEffect(1.5)
-                .tint(.primary)
-            
-            Text("Getting your location...")
-                .font(.system(size: 16))
-                .foregroundColor(.primary.opacity(0.6))
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 100)
+        ShimmerLoadingView(message: "Getting your location...")
     }
     
     // MARK: - Error View
     private func errorView(message: String) -> some View {
-        VStack(spacing: 20) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 50))
-                .foregroundColor(.orange)
-            
-            Text(message)
-                .font(.system(size: 16))
-                .foregroundColor(.primary.opacity(0.7))
-                .multilineTextAlignment(.center)
-            
-            Button {
-                Task { await viewModel.loadCurrentLocationWeather() }
-            } label: {
-                Text("Try Again")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 12)
-                    .background(
-                        Capsule()
-                            .fill(Color(hex: "4763eb"))
-                    )
-            }
+        GlassErrorView(message: message) {
+            await viewModel.loadCurrentLocationWeather()
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 60)
     }
     
     // MARK: - Search Results Overlay
@@ -335,8 +326,11 @@ struct HomeView: View {
                         Task {
                             let success = await viewModel.addToFavorites(city)
                             if success {
+                                HapticService.success()
                                 viewModel.searchText = ""
                                 showSearchResults = false
+                            } else {
+                                HapticService.error()
                             }
                         }
                     } label: {

@@ -20,6 +20,9 @@ struct SettingsView: View {
     // User Info
     @State private var userEmail: String? = SupabaseService.shared.currentUser?.email
     
+    // Animation State
+    @State private var showContent = false
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
@@ -79,6 +82,7 @@ struct SettingsView: View {
                         .pickerStyle(.menu)
                         .onChange(of: theme) { _, newValue in
                             PreferencesService.shared.theme = newValue
+                            HapticService.selection()
                         }
                     }
                     .padding()
@@ -105,6 +109,7 @@ struct SettingsView: View {
                         .frame(width: 120)
                         .onChange(of: temperatureUnit) { _, newValue in
                             PreferencesService.shared.temperatureUnit = newValue
+                            HapticService.selection()
                             // Trigger refreshes elsewhere if needed
                             Task {
                                 await HomeViewModel().refreshWeather()
@@ -118,6 +123,7 @@ struct SettingsView: View {
                 // Actions
                 Button {
                     showingSignOutAlert = true
+                    HapticService.warning()
                 } label: {
                     HStack {
                         Image(systemName: "rectangle.portrait.and.arrow.right")
@@ -152,6 +158,11 @@ struct SettingsView: View {
             Button("Cancel", role: .cancel) { }
             Button("Sign Out", role: .destructive) {
                 signOut()
+            }
+        }
+        .onAppear {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
+                showContent = true
             }
         }
     }

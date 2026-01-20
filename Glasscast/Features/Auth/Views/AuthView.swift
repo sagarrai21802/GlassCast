@@ -243,6 +243,7 @@ struct AuthForm: View {
             
             // Action Button
             Button {
+                HapticService.mediumImpact()
                 Task { await viewModel.authenticate() }
             } label: {
                 ZStack {

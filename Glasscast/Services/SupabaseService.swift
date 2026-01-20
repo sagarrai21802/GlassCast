@@ -14,9 +14,14 @@ import PostgREST
 class SupabaseService {
     static let shared = SupabaseService()
     
-    // MARK: - Configuration
-    private let supabaseURL = URL(string: "https://eoidtvgddtxjjjaahmbe.supabase.co")!
-    private let supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvaWR0dmdkZHR4ampqYWFobWJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MjAyMzEsImV4cCI6MjA4NDM5NjIzMX0.x1fbFnx2dB54N86VNDwki9NitpcVL1uiM28iOejwc1s"
+    // MARK: - Configuration (Loaded from Keychain)
+    private var supabaseURL: URL {
+        URL(string: SecureKeyStorage.shared.supabaseURL) ?? URL(string: "https://example.supabase.co")!
+    }
+    
+    private var supabaseKey: String {
+        SecureKeyStorage.shared.supabaseAnonKey
+    }
     
     // MARK: - Clients
     let authClient: AuthClient
@@ -37,11 +42,16 @@ class SupabaseService {
     }
     
     private init() {
+        // Load keys from secure storage
+        let urlString = SecureKeyStorage.shared.supabaseURL
+        let key = SecureKeyStorage.shared.supabaseAnonKey
+        let url = URL(string: urlString) ?? URL(string: "https://example.supabase.co")!
+        
         // Initialize Auth client
         authClient = AuthClient(
             configuration: AuthClient.Configuration(
-                url: supabaseURL.appendingPathComponent("auth/v1"),
-                headers: ["apikey": supabaseKey, "Authorization": "Bearer \(supabaseKey)"],
+                url: url.appendingPathComponent("auth/v1"),
+                headers: ["apikey": key, "Authorization": "Bearer \(key)"],
                 localStorage: KeychainLocalStorage()
             )
         )

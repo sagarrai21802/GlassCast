@@ -79,7 +79,11 @@ struct CitySearchResult: Codable, Identifiable {
 class WeatherService {
     static let shared = WeatherService()
     
-    private let apiKey = "0d1e96c6f8c365438e1b150bae43f43a"
+    // MARK: - Configuration (Loaded from Keychain)
+    private var apiKey: String {
+        SecureKeyStorage.shared.openWeatherAPIKey
+    }
+    
     private let baseURL = "https://api.openweathermap.org/data/2.5"
     private let geoURL = "https://api.openweathermap.org/geo/1.0"
     

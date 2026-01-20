@@ -34,6 +34,7 @@ struct CustomTabBar: View {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                         selectedTab = tab
                     }
+                    HapticService.lightImpact()
                 } label: {
                     VStack(spacing: 4) {
                         Image(systemName: tab.icon)
