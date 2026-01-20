@@ -1,182 +1,59 @@
-# 🌤️ Glasscast - Premium Weather App
+# Glasscast 🌤️
 
-A beautifully designed iOS weather application built with SwiftUI, featuring a glassmorphism UI, OTP authentication, and real-time weather data.
+**Built live on stream!** 🎥
 
-![iOS 26+](https://img.shields.io/badge/iOS-26%2B-blue)
-![Swift 5.9](https://img.shields.io/badge/Swift-5.9-orange)
-![SwiftUI](https://img.shields.io/badge/SwiftUI-4.0-green)
+Glasscast isn't just another weather app. It's an exploration into premium iOS design, connecting real data with a beautiful, tactile interface. We built this from scratch, focusing on "glassmorphism" aesthetics, smooth animations, and top-tier security.
 
-## 📱 Demo
-
-> 🎬 **Video Demo**: [Watch the demo video](./demo.mp4)
-
-## ✨ Features
-
-### Core Features
-- 🌡️ **Real-time Weather** - Current conditions, temperature, humidity, wind
-- 📅 **5-Day Forecast** - Daily weather predictions with high/low temps
-- 🔍 **City Search** - Find and add any city worldwide
-- ❤️ **Favorites** - Save cities and sync across sessions
-- 🌙 **Dark/Light Mode** - System, light, or dark theme options
-- 📲 **Haptic Feedback** - Tactile responses for premium feel
-
-### Security
-- 🔐 **OTP Authentication** - Email-based verification (no magic links)
-- 🔑 **Keychain Storage** - All API keys stored securely
-- 🔄 **Auto-Login** - Session persistence via Keychain
-
-### Polish
-- ✨ **Glassmorphism UI** - Modern translucent design
-- 🎭 **Smooth Animations** - Staggered card entrances, floating icons
-- 📱 **Premium Loading States** - Shimmer effects and styled errors
-
-## 🛠️ Tech Stack
-
-| Component | Technology |
-|-----------|------------|
-| UI Framework | SwiftUI |
-| Architecture | MVVM |
-| Backend | Supabase (Auth + PostgreSQL) |
-| Weather API | OpenWeatherMap |
-| Secure Storage | iOS Keychain |
-| Testing | XCTest |
-
-## 📦 Installation
-
-### Prerequisites
-- Xcode 26.0+
-- iOS 26.0+ device or simulator
-- Swift 5.9+
-
-### Steps
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/sagarrai21802/GlassCast.git
-   cd GlassCast
-   ```
-
-2. **Open in Xcode**
-   ```bash
-   open Glasscast.xcodeproj
-   ```
-
-3. **Install Dependencies**
-   - Xcode will automatically resolve Swift Package Manager dependencies
-   - Wait for Supabase SDK to download
-
-4. **Build & Run**
-   - Select a simulator or device
-   - Press `Cmd + R`
-
-## 🔐 API Key Configuration
-
-The app uses **Keychain** for secure API key storage. On first launch, default development keys are automatically stored.
-
-### How It Works
-
-1. **First Launch**: `SecureKeyStorage.swift` initializes default keys:
-   - Supabase URL
-   - Supabase Anon Key
-   - OpenWeatherMap API Key
-
-2. **Subsequent Launches**: Keys are read from Keychain (not source code)
-
-### Updating API Keys
-
-To use your own API keys, modify `SecureKeyStorage.swift`:
-
-```swift
-private func initializeDefaultKeysIfNeeded() {
-    if retrieve(key: .supabaseURL) == nil {
-        _ = save(key: .supabaseURL, value: "YOUR_SUPABASE_URL")
-    }
-    
-    if retrieve(key: .supabaseAnonKey) == nil {
-        _ = save(key: .supabaseAnonKey, value: "YOUR_SUPABASE_ANON_KEY")
-    }
-    
-    if retrieve(key: .openWeatherAPIKey) == nil {
-        _ = save(key: .openWeatherAPIKey, value: "YOUR_OPENWEATHER_API_KEY")
-    }
-}
-```
-
-### Getting Your Own Keys
-
-| Service | How to Get |
-|---------|-----------|
-| **Supabase** | Create project at [supabase.com](https://supabase.com) |
-| **OpenWeatherMap** | Sign up at [openweathermap.org](https://openweathermap.org/api) |
-
-## 🧪 Running Tests
-
-```bash
-# Run all tests
-xcodebuild test -scheme Glasscast -destination 'platform=iOS Simulator,name=iPhone 16'
-
-# Or in Xcode
-Cmd + U
-```
-
-### Test Coverage
-- `SecureKeyStorageTests` - Keychain operations
-- `PreferencesServiceTests` - User preferences persistence
-- `WeatherServiceTests` - JSON decoding, model validation
-
-## 📁 Project Structure
-
-```
-Glasscast/
-├── Core/
-│   └── Theme/
-│       ├── GlasscastTheme.swift
-│       ├── PremiumBackground.swift
-│       └── AnimationStyles.swift
-├── Features/
-│   ├── Auth/
-│   │   ├── Views/
-│   │   │   ├── AuthView.swift
-│   │   │   └── OTPVerificationView.swift
-│   │   └── ViewModels/
-│   │       └── AuthViewModel.swift
-│   ├── Home/
-│   │   ├── Views/
-│   │   │   └── HomeView.swift
-│   │   └── ViewModels/
-│   │       └── HomeViewModel.swift
-│   ├── Favourites/
-│   ├── Settings/
-│   └── Navigation/
-├── Services/
-│   ├── SupabaseService.swift
-│   ├── WeatherService.swift
-│   ├── LocationService.swift
-│   ├── PreferencesService.swift
-│   ├── SecureKeyStorage.swift
-│   ├── KeychainLocalStorage.swift
-│   └── HapticService.swift
-└── Shared/
-    └── Components/
-        └── SharedComponents.swift
-```
-
-## 🎨 Design Highlights
-
-- **Glassmorphism**: Translucent backgrounds with blur effects
-- **Adaptive Colors**: Uses `.primary` for automatic light/dark adaptation
-- **Spring Animations**: Natural-feeling card transitions
-- **Floating Elements**: Weather icon gently floats for visual interest
-
-## 📝 License
-
-This project is for educational purposes. Feel free to use as reference.
-
-## 👤 Author
-
-**Sagar Rai**
-- GitHub: [@sagarrai21802](https://github.com/sagarrai21802)
+[**Watch the Making Of / Demo Video**](https://drive.google.com/file/d/1HdSpUpRuEt4PGOGlJel7-obg_2bMeuQY/view?usp=sharing)
 
 ---
 
-Made with ❤️ using SwiftUI
+## What's Inside?
+
+*   **Glass UI**: Translucent layers that adapt to Light/Dark mode.
+*   **Real-time Weather**: Powered by OpenWeatherMap.
+*   **Secure Auth**: Sign up with email via Supabase (OTP only, no passwords saved).
+*   **Keychain Security**: We don't hardcode keys. They live in the iOS Keychain.
+*   **Feel the Weather**: Haptic feedback on every meaningful interaction.
+
+## Tech Stack
+
+*   **SwiftUI** (iOS 26+)
+*   **Supabase** (Auth & Database)
+*   **Keychain Services**
+*   **MVVM Architecture**
+
+---
+
+## How to Run This
+
+1.  **Clone it**:
+    ```bash
+    git clone https://github.com/sagarrai21802/GlassCast.git
+    open Glasscast.xcodeproj
+    ```
+
+2.  **Wait a sec**: Xcode will fetch the Supabase SDK.
+
+3.  **API Keys (The Secure Way)**:
+    This app uses **Keychain** to store API keys, so they aren't exposed in the code.
+    
+    On the very first launch, the app sets up default keys (for demo purposes). If you want to use *your* keys, check `Services/SecureKeyStorage.swift` and look for `initializeDefaultKeysIfNeeded()`.
+
+    You'll need keys for:
+    *   **Supabase** (URL & Anon Key)
+    *   **OpenWeatherMap** (API Key)
+
+4.  **Run**: Hit `Cmd + R` and enjoy.
+
+---
+
+## Testing
+
+We added unit tests for the critical stuff (Security, Preferences, JSON parsing).
+Run them with `Cmd + U`.
+
+---
+
+**Made by Sagar Rai**
+*Built with passion, code, and coffee.*
