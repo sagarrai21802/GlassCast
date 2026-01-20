@@ -5,6 +5,7 @@
 Glasscast isn't just another weather app. It's an exploration into premium iOS design, connecting real data with a beautiful, tactile interface. We built this from scratch, focusing on "glassmorphism" aesthetics, smooth animations, and top-tier security.
 
 [**Watch the Making Of / Demo Video**](https://drive.google.com/file/d/1HdSpUpRuEt4PGOGlJel7-obg_2bMeuQY/view?usp=sharing)
+[**Watch the Live Build on YouTube**](https://youtube.com/live/WqX9LzF3sKU?feature=share)
 
 ---
 
