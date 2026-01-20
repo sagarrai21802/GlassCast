@@ -99,15 +99,15 @@ final class SecureKeyStorage {
     private func initializeDefaultKeysIfNeeded() {
         // Check if keys already exist
         if retrieve(key: .supabaseURL) == nil {
-            _ = save(key: .supabaseURL, value: "https://eoidtvgddtxjjjaahmbe.supabase.co")
+            _ = save(key: .supabaseURL, value: Keys.supabaseURL)
         }
         
         if retrieve(key: .supabaseAnonKey) == nil {
-            _ = save(key: .supabaseAnonKey, value: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvaWR0dmdkZHR4ampqYWFobWJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MjAyMzEsImV4cCI6MjA4NDM5NjIzMX0.x1fbFnx2dB54N86VNDwki9NitpcVL1uiM28iOejwc1s")
+            _ = save(key: .supabaseAnonKey, value: Keys.supabaseAnonKey)
         }
         
         if retrieve(key: .openWeatherAPIKey) == nil {
-            _ = save(key: .openWeatherAPIKey, value: "0d1e96c6f8c365438e1b150bae43f43a")
+            _ = save(key: .openWeatherAPIKey, value: Keys.openWeatherAPIKey)
         }
     }
 }

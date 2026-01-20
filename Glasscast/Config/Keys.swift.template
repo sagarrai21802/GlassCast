@@ -1,0 +1,8 @@
+// Keys.swift - ADD THIS FILE MANUALLY AND DO NOT COMMIT
+// This file should be added to .gitignore
+
+enum Keys {
+    static let supabaseURL = "YOUR_SUPABASE_URL"
+    static let supabaseAnonKey = "YOUR_SUPABASE_ANON_KEY"
+    static let openWeatherAPIKey = "YOUR_OPENWEATHER_API_KEY"
+}
