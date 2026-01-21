@@ -42,7 +42,7 @@ struct AuthView: View {
                         .opacity(appearContent ? 1 : 0)
                     
                     // Footer / Social Login
-                    AuthFooter(viewModel: viewModel)
+                    
                         .padding(.top, 40)
                         .padding(.bottom, 24)
                         .opacity(appearContent ? 1 : 0)
@@ -64,9 +64,9 @@ struct AuthView: View {
             }
         }
         .overlay {
-            // OTP Verification Modal
+            // Email Confirmation Message
             if viewModel.showOtpInput {
-                OTPVerificationView(viewModel: viewModel)
+                EmailConfirmationView(viewModel: viewModel)
                     .transition(.opacity)
             }
         }
@@ -85,7 +85,7 @@ struct AuthHeader: View {
                 Circle()
                     .fill(
                         LinearGradient(
-                            colors: [Color.white.opacity(0.1), Color.white.opacity(0.02)],
+                            colors: [Color.primary.opacity(0.1), Color.primary.opacity(0.02)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -95,7 +95,7 @@ struct AuthHeader: View {
                         Circle()
                             .stroke(
                                 LinearGradient(
-                                    colors: [.white.opacity(0.3), .clear, .white.opacity(0.1)],
+                                    colors: [Color.primary.opacity(0.3), .clear, Color.primary.opacity(0.1)],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 ),
@@ -108,12 +108,12 @@ struct AuthHeader: View {
                     .font(.system(size: 32))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [.white, .white.opacity(0.7)],
+                            colors: [Color.primary, Color.primary.opacity(0.7)],
                             startPoint: .top,
                             endPoint: .bottom
                         )
                     )
-                    .shadow(color: .white.opacity(0.5), radius: 10)
+                    .shadow(color: Color.primary.opacity(0.3), radius: 10)
             }
             
             VStack(spacing: 8) {
@@ -122,7 +122,7 @@ struct AuthHeader: View {
                     .tracking(-1)
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [.white, .white.opacity(0.8)],
+                            colors: [Color.primary, Color.primary.opacity(0.8)],
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -130,7 +130,7 @@ struct AuthHeader: View {
                 
                 Text("Your premium weather companion")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.white.opacity(0.5))
+                    .foregroundColor(.primary.opacity(0.5))
                     .tracking(0.5)
             }
         }
@@ -159,7 +159,7 @@ struct PremiumSegmentedControl: View {
                         
                         Text(mode.rawValue)
                             .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(selectedMode == mode ? .white : .white.opacity(0.5))
+                            .foregroundColor(selectedMode == mode ? .primary : .primary.opacity(0.5))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
                     }
@@ -296,6 +296,8 @@ struct PremiumTextField: View {
             TextField("", text: $text, prompt: Text(placeholder).foregroundColor(.primary.opacity(0.3)))
                 .foregroundColor(.primary)
                 .keyboardType(keyboardType)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
                 .focused($isFocused)
         }
         .padding(.horizontal, 20)
@@ -377,47 +379,6 @@ struct PremiumSecureField: View {
 }
 
 // MARK: - Footer
-struct AuthFooter: View {
-    @Bindable var viewModel: AuthViewModel
-    
-    var body: some View {
-        VStack(spacing: 30) {
-            HStack(spacing: 16) {
-                Rectangle().fill(Color.primary.opacity(0.1)).frame(height: 1)
-                Text("or continue with").font(.caption).foregroundColor(.primary.opacity(0.4))
-                Rectangle().fill(Color.primary.opacity(0.1)).frame(height: 1)
-            }
-            
-            HStack(spacing: 20) {
-                SocialButton(icon: "apple.logo") { Task { await viewModel.signInWithApple() } }
-                SocialButton(icon: "g.circle.fill") { Task { await viewModel.signInWithGoogle() } }
-            }
-        }
-    }
-}
-
-struct SocialButton: View {
-    let icon: String
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.primary.opacity(0.05))
-                
-                Image(systemName: icon)
-                    .font(.system(size: 22))
-                    .foregroundColor(.primary)
-            }
-            .frame(height: 56)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.primary.opacity(0.1), lineWidth: 1)
-            )
-        }
-    }
-}
 
 #Preview {
     AuthView(isAuthenticated: .constant(false))
